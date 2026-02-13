@@ -19,6 +19,6 @@ print("After cleaning: ", df.shape)
 engine = create_engine("sqlite:///../db/sales.db")
 
 #recording to the database
-df.to_sql("Transaction", engine, if_exists="replace", index=False)
+df.to_sql("Transactions", engine, if_exists="replace", index=False)
 
 print("The data has been saved to the database")
