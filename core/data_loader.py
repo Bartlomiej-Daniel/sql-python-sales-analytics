@@ -23,3 +23,14 @@ def load_monthly_data():
     monthly.columns = ["ds", "y"]
 
     return monthly
+
+def load_daily_data():
+    engine = _get_engine()
+    df = pd.read_sql("SELECT InvoiceDate, TotalPrice FROM Transactions", engine)
+
+    df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
+
+    daily = df.groupby("InvoiceDate")["TotalPrice"].sum().reset_index()
+    daily.columns = ["ds", "y"]
+
+    return daily
