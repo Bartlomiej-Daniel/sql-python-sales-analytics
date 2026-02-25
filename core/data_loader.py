@@ -13,7 +13,7 @@ def load_full_data():
     return df
 
 def load_monthly_data():
-    engine = _get_engine
+    engine = _get_engine()
     df = pd.read_sql("SELECT InvoiceDate, TotalPrice FROM Transactions", engine)
 
     df["InvoiceDate"] = pd.to_datetime(df["InvoiceDate"])
