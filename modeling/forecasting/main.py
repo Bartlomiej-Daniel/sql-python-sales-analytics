@@ -1,6 +1,10 @@
-from data_loader import load_monthly_data
-from models import prophet_model, linear_regression_model, naive_model
-from evaluation import compute_metrics
+from core.data_loader import load_monthly_data
+from modeling.forecasting.models import (
+    prophet_model,
+    linear_regression_model,
+    naive_model
+)
+from modeling.forecasting.evaluation import compute_metrics
 
 
 # Load data

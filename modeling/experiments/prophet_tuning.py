@@ -1,12 +1,7 @@
 from prophet import Prophet
 from pathlib import Path
-import sys
-
-root = Path(__file__).resolve().parent.parent
-sys.path.append(str(root))
-
-from evaluation import compute_metrics
-from data_loader import load_monthly_data
+from core.data_loader import load_monthly_data
+from modeling.forecasting.evaluation import compute_metrics
 
 
 def train_model(train_data, changepoint_scale=0.05):
