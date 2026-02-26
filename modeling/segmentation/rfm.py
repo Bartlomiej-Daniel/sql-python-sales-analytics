@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 from core.data_loader import load_full_data
 
 
@@ -58,6 +59,32 @@ def assign_segments(rfm):
 
     return rfm
 
+def generate_rfm_report(rfm):
+    segment_summary = (
+        rfm.groupby("Segment")
+        .agg(
+                Customers = ("CustomerID", "count"),
+                Total_Revenue = ("Monetary", "sum"),
+                Avg_Revenue = ("Monetary", "mean")
+        )
+        .sort_values("Total_Revenue", ascending=False)
+    )
+
+    with pd.ExcelWriter("reports/rfm_report.xlsx") as writer:
+        rfm.to_excel(writer, sheet_name="RFM_Data", index=False)
+        segment_summary.to_excel(writer, sheet_name="Segment_Summary")
+        
+    plt.figure(figsize=(8,5))
+    segment_summary["Total_Revenue"].plot(kind="bar")
+    plt.title("Revenue by Segment")
+    plt.ylabel("Total Revenue")
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig("reports/revenue_bysegment.png")
+    plt.close()
+
+    print("\nReport generated in 'reports/' folder")
+
 if __name__ == "__main__":
     rfm = calculate_rfm()
     rfm = add_rfm_scores(rfm)
@@ -67,4 +94,12 @@ if __name__ == "__main__":
     print(rfm.head())
 
     print("\nSEGMENT DISTRIBUTION")
-    print(rfm["Segment"].value_counts())
+    segment_counts = rfm["Segment"].value_counts().reset_index()
+    segment_counts.columns = ["Segment", "Count"]
+    print(segment_counts)
+
+    print("\nREVENUE BY SEGMENT")
+    revenue_by_segment = rfm.groupby("Segment")["Monetary"].sum().sort_values(ascending=False)
+    print(revenue_by_segment)
+
+    generate_rfm_report(rfm)
