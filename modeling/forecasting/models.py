@@ -28,20 +28,3 @@ def naive_model(train, test):
     return [last_value] * len(test)
 
 
-"""
-def train_model(train_data):
-    model = Prophet()
-    model.fit(train_data)
-    return model
-
-def train_model(train_data, changepoint_scale=0.05):
-    model = Prophet(changepoint_prior_scale=changepoint_scale)
-    model.fit(train_data)
-    return model
-
-def make_forecast(model, periods, freq = "MS"):
-    future = model.make_future_dataframe(periods = periods, freq = freq)
-    forecast = model.predict(future)
-    return forecast
-
-"""
