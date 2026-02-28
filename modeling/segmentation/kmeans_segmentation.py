@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import silhouette_score
 
 from modeling.segmentation.rfm import calculate_rfm, add_rfm_scores, assign_segments
 
@@ -98,6 +99,14 @@ def plot_revenue_share(rfm):
     print(revenue_share.round(2))
     print("\nRevenue share plot saved in reports/")
 
+def calculate_silhouette(scaled_data, labels):
+    score = silhouette_score(scaled_data, labels)
+
+    print("\nSilhouette Score:")
+    print(round(score, 4))
+
+    return score
+
 
 if __name__ == "__main__":
     rfm, scaled_data = prepare_data()
@@ -106,6 +115,8 @@ if __name__ == "__main__":
     find_optimal_clusters(scaled_data)
 
     rfm, model = apply_kmeans(rfm, scaled_data, n_cluster=3)
+
+    calculate_silhouette(scaled_data, rfm["Cluster"])
 
     print("\nCluster distribution")
     print(rfm["Cluster"].value_counts())
@@ -121,11 +132,11 @@ if __name__ == "__main__":
     )
 
     print(cluster_profile)
-
+    
     plot_clusters(rfm)
 
     plot_revenue_share(rfm)
 
-
+    
 
 
