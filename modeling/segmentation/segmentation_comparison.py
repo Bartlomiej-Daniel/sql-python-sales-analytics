@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sqlalchemy.sql.operators import comparison_op
 from modeling.segmentation.kmeans_segmentation import (
     prepare_data,
     apply_kmeans
@@ -20,6 +19,21 @@ def compare_segments():
 
     print("\nRFM vs KMeans Comparison:")
     print(comparison)
+
+    # VIP analysis
+    vip_total =len(rfm[rfm["Segment"] == "VIP"])
+    vip_in_cluster2 = len(rfm[(rfm["Segment"] == "VIP") & (rfm["Cluster"] == 2)])
+
+    vip_capture_rate = vip_in_cluster2 / vip_total * 100
+
+    cluster2_total = len(rfm[rfm["Cluster"] == 2])
+    cluster2_vip_share = vip_in_cluster2 / cluster2_total * 100
+
+    print("\nVIP total:", vip_total)
+    print("VIP in Cluster 2:", vip_in_cluster2)
+    print("VIP capture rate:", round(vip_capture_rate, 2), "%")
+    print("VIP share inside Cluster 2:", round(cluster2_vip_share, 2), "%")
+
     
     return comparison
 
