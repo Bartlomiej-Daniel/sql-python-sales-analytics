@@ -1,3 +1,4 @@
+from re import S
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -33,6 +34,32 @@ def compare_segments():
     print("VIP in Cluster 2:", vip_in_cluster2)
     print("VIP capture rate:", round(vip_capture_rate, 2), "%")
     print("VIP share inside Cluster 2:", round(cluster2_vip_share, 2), "%")
+
+    # Revenue analysis
+    total_revenue = rfm["Monetary"].sum()
+
+    cluster2_revenue = rfm[rfm["Cluster"] == 2]["Monetary"].sum()
+    cluster2_revenue_share = cluster2_revenue / total_revenue * 100
+
+    vip_revenue = rfm[rfm["Segment"] == "VIP"]["Monetary"].sum()
+
+    # Average revenue
+    cluster2_avg = rfm[rfm["Cluster"] == 2]["Monetary"].mean()
+    vip_avg = rfm[rfm["Segment"] == "VIP"]["Monetary"].mean()
+
+    print("\nRevenue Deep Dive")
+    print("Total revenue: ", round(total_revenue, 2))
+    print("Cluster 2 revenue: ", round(cluster2_revenue, 2))
+    print("Cluster revenue share: ", round(cluster2_revenue_share, 2))
+
+    print("\nVIP total revenue: ", round(vip_revenue,2))
+
+    print("\nAverage revenue per customer: ")
+    print("Cluster 2 avg: ", round(cluster2_avg,2))
+    print("VIP avg: ", round(vip_avg,2))
+
+    multiple = cluster2_avg / vip_avg
+    print("\nUltra VIP vs Average VIP multiple:", round(multiple, 2), "x")
 
     
     return comparison
