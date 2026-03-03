@@ -61,6 +61,20 @@ def compare_segments():
     multiple = cluster2_avg / vip_avg
     print("\nUltra VIP vs Average VIP multiple:", round(multiple, 2), "x")
 
+    print("\nChurn Risk Simulation (Ultra VIP)")
+
+    ultra_vip = rfm[rfm["Cluster"] == 2]
+    ultra_vip_revenues = ultra_vip["Monetary"].sort_values(ascending=False)
+
+    total_revenue = rfm["Monetary"].sum()
+
+    for lost_clients in [1, 3, 5, 10, 23]:
+        revenue_loss = ultra_vip_revenues.head(lost_clients).sum()
+        revenue_loss_pct = revenue_loss / total_revenue * 100
+    
+        print(f"If we lose {lost_clients} Ultra VIP(s):")
+        print(f"  Revenue loss: {round(revenue_loss, 2)}")
+        print(f"  Revenue impact: {round(revenue_loss_pct, 2)} %\n")
     
     return comparison
 
