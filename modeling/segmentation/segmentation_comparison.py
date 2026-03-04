@@ -1,4 +1,3 @@
-from re import S
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -75,7 +74,66 @@ def compare_segments():
         print(f"If we lose {lost_clients} Ultra VIP(s):")
         print(f"  Revenue loss: {round(revenue_loss, 2)}")
         print(f"  Revenue impact: {round(revenue_loss_pct, 2)} %\n")
-    
+
+    print("\nUltra VIP churn risk scoring")
+    ultra_vip = rfm[rfm["Cluster"] == 2].copy()
+
+    # Recency risk (higher recency = worse)
+    ultra_vip["Recency_risk"] = pd.qcut(
+        ultra_vip["Recency"],
+        3,
+        labels=[1,2,3]
+    )
+
+    # Frequency risk (lower frequency = worse)
+    ultra_vip["Frequency_risk"] = pd.qcut(
+        ultra_vip["Frequency"],
+        3,
+        labels=[3, 2, 1]
+    )
+
+    # Monetary risk (lower monetary = worse)
+    ultra_vip["Monetary_risk"] = pd.qcut(
+        ultra_vip["Monetary"],
+        3,
+        labels=[3, 2, 1]
+    )
+
+    ultra_vip["Churn_risk_score"] = (
+        ultra_vip["Recency_risk"].astype(int) +
+        ultra_vip["Frequency_risk"].astype(int) +
+        ultra_vip["Monetary_risk"].astype(int)
+    )
+
+    def risk_score(score):
+        if score >= 7:
+            return "High risk"
+        elif score >= 5:
+            return "Medium risk"
+        else:
+            return "Low risk"
+
+    ultra_vip["Risk_level"] = ultra_vip["Churn_risk_score"].apply(risk_score)
+
+    print("Ultra VIP Risk Distribution")
+    print(ultra_vip["Risk_level"].value_counts())
+    print(
+        ultra_vip[ultra_vip["Risk_level"] == "High risk"]
+        [["CustomerID", "Recency", "Frequency", "Monetary", "Churn_risk_score"]]
+        .sort_values("Churn_risk_score", ascending=False)
+    )
+
+    high_risk = ultra_vip[ultra_vip["Risk_level"] == "High risk"]
+
+    high_risk_revenue = high_risk["Monetary"].sum()
+    total_revenue = rfm["Monetary"].sum()
+
+    print("\nHigh risk ultra VIP revenue:")
+    print(round(high_risk_revenue, 2))
+
+    print("Share of total revenue:")
+    print(round(high_risk_revenue / total_revenue * 100, 2), "%")
+
     return comparison
 
 def plot_heatmap(comparison):
